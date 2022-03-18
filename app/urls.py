@@ -1,9 +1,14 @@
 from django.urls import path, include
+from rest_framework import routers
 
 from app import views as app
 
 
+router = routers.SimpleRouter()
+router.register('posts', app.PostViewSet)
+router.register('comments', app.CommentViewSet)
+router.register('reactions', app.ReactionViewSet)
+
 urlpatterns = [
-    path('get-posts/', app.PostViewSet.as_view()),
-    path('get-posts/<int:post_pk>/', app.GetPostAPI.as_view()),
+    path('', include(router.urls)),
 ]

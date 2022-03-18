@@ -4,37 +4,19 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.viewsets import ModelViewSet
 
 from app.models import Post, Image, Reaction, Size, Comment
-from app.serializers import PostsSerializer, PostSerializer
+from app.serializers import PostSerializer, CommentSerializer, ReactionSerializer
 
 
-class PostViewSet(ListCreateAPIView):
+class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    # permission_classes = [IsAuthenticated]
 
 
-class PostsAPI(APIView):
-    """ Получение всех постов и создание постов """
+class CommentViewSet(ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
-    def get(self, request):
-        posts = Post.objects.all()
-        serializer = PostsSerializer(posts, many=True)
-        return Response(serializer.data)
 
-    def post(self, request):
-        post = PostSerializer(data=request.data)
-        if post.is_valid():
-            post.save()
-            return Response(status=201)
-        else:
-            return Response(status=401)
-
-    
-class GetPostAPI(APIView):
-    """" Получение конкретного поста, его изменение и удаление """
-
-    def get(self, request, post_pk):
-        post = Post.objects.get(id=post_pk)
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
-
+class ReactionViewSet(ModelViewSet):
+    queryset = Reaction.objects.all()
+    serializer_class = ReactionSerializer

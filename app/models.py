@@ -16,8 +16,6 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
 
-
-
 class Image(models.Model):
     image = models.ImageField(upload_to='images/')
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -26,7 +24,7 @@ class Image(models.Model):
 
 class Reaction(models.Model):
     CHOICE = (
-        ('😊', 'smile'),
+        ('smile', '😊'),
         ('☹', 'sad'),
         ('😂', 'lol'),
         ('😡', 'angry'),
@@ -36,7 +34,7 @@ class Reaction(models.Model):
     date_del = models.DateTimeField(default=None, null=True)
     emoji = models.CharField(max_length=50, choices=CHOICE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='reactions')
 
 
 class Comment(models.Model):
