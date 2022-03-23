@@ -18,8 +18,8 @@ class Post(models.Model):
 
 class Image(models.Model):
     image = models.ImageField(upload_to='images/')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    coords = models.CharField(max_length=255)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
+    coords = models.CharField(max_length=255, blank=True, null=True)
 
 
 class Reaction(models.Model):
