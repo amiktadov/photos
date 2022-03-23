@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -5,7 +6,7 @@ from base64 import b64encode as enc64
 from base64 import b64decode as dec64
 
 from .image_processing import Image as Img
-from del_photos.settings import MEDIA_ROOT
+from del_photos.settings import MEDIA_ROOT, MEDIA_URL
 from app.models import Post, Image, Reaction, Size, Comment
 from app.serializers import (
     PostSerializer, CommentSerializer, ReactionSerializer,
@@ -18,23 +19,26 @@ class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
 
 
-
 class CommentViewSet(ModelViewSet):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.filter(date_del__isnull=True)
     serializer_class = CommentSerializer
+
+    def destroy(self, request, pk, *args, **kwargs):
+        reaction = Comment.objects.get(id=pk)
+        reaction.date_del = timezone.now()
+        reaction.save()
+        return Response(status=202)
 
 
 class ReactionViewSet(ModelViewSet):
-    queryset = Reaction.objects.all()
+    queryset = Reaction.objects.filter(date_del__isnull=True)
     serializer_class = ReactionSerializer
 
-    def get(self, request, pk, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         reaction = Reaction.objects.get(id=pk)
-        # if reaction.user == 
-        return super().get(self, request, *args, **kwargs)
-
-    def destroy(self, *args, **kwargs):
-        return super().destroy(self, *args, **kwargs)
+        reaction.date_del = timezone.now()
+        reaction.save()
+        return Response(status=202)
 
 
 class SizeViewSet(ModelViewSet):
@@ -46,25 +50,42 @@ class ImageViewSet(ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
 
+    def retrieve(self, request, pk, *args, **kwargs):
+        image = self.queryset.get(id=pk)
+        path = ''.join([MEDIA_ROOT, str(image.image)])
+        with open(path , 'rb') as i:
+            base = enc64(i.read())
+        arg = {
+            "id": pk,
+            "path": MEDIA_URL+str(image.image),
+            "base64": base,
+            "coords": image.coords,
+            "post": image.post.pk
+        }
+        return Response(arg, status=201)
+
     def create(self, request, *args, **kwargs):
-        print(dir(request))
-        print(request.POST)
         if 'effect' in request.POST.keys():
-            effect = request.POST['effect']
+            
+            if request.FILES['image']:
+                image = request.FILES['image']
+            else:
+                image = request.POST['image']
+                image = dec64(image)
+
             img = Image.objects.create(
-                image = request.FILES['image'],
+                image=image,
                 post=Post.objects.get(id=request.POST['post'])
             )
-            print(dir(img))
-            print(img.image)
+
+            effect = request.POST['effect']
+            path = ''.join([MEDIA_ROOT, str(img.image)])
+            after_effect = Img(path)
 
             if effect == 'blur':
-
-                path = ''.join([MEDIA_ROOT, str(img.image)])
-                print(path)
-                after_effect = Img(path)
                 after_effect.Blur()
-                after_effect.image.save(path)
+
+            after_effect.image.save(path)
 
             arg = {
                 'id': img.pk,

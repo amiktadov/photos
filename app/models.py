@@ -25,10 +25,10 @@ class Image(models.Model):
 class Reaction(models.Model):
     CHOICE = (
         ('smile', '😊'),
-        ('☹', 'sad'),
-        ('😂', 'lol'),
-        ('😡', 'angry'),
-        ('♥', 'hard')
+        ('sad', '☹'),
+        ('lol', '😂'),
+        ('angry', '😡'),
+        ('hard', '♥')
     )
     date_add = models.DateTimeField(auto_now_add=True)
     date_del = models.DateTimeField(default=None, null=True)
