@@ -2,10 +2,10 @@ version: "3.9"
    
 services:
   db:
-    image: postgres
+    image: postgres:12.6
     volumes:
       - ./data/db:/var/lib/postgresql/data
-    envfile:
+    env_file:
       - .env
   web:
     build: .
@@ -14,18 +14,8 @@ services:
       - .:/code
     ports:
       - "8000:8000"
-    envfile:
+    env_file:
       - .env
     depends_on:
       - db
-  migrations:
-    build: .
-    command: python manage.py makemigrations
-    volumes:
-      - .:/code
-    ports:
-      - "8000:8000"
-    envfile:
-      - .env
-    depends_on:
-      - db
+      
