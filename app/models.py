@@ -1,7 +1,5 @@
 from django.db import models
-from datetime import datetime as dt
 from django.contrib.auth.models import User
-from django.forms import DateTimeField
 
 
 class BaseModel(models.Model):

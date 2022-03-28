@@ -2,11 +2,12 @@ from pathlib import Path
 from datetime import timedelta
 
 import os
+import settings_local as sl
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-3w&7g9qfydw#=8-bzh&v_3@v3&*mr_&cxzbimv14ah4=@v93pq'
+SECRET_KEY = sl.secret_key
 
 DEBUG = True
 
@@ -32,11 +33,11 @@ DJOSER = {
     'SERIALIZERS': {},
 }
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'miktadov.work@gmail.com'
-EMAIL_HOST_PASSWORD = 'Aa1995Vv2000!'
-EMAIL_PORT = 587
+EMAIL_USE_TLS = sl.email_use_tls
+EMAIL_HOST = sl.email_host
+EMAIL_HOST_USER = sl.email_host_user
+EMAIL_HOST_PASSWORD = sl.email_host_password
+EMAIL_PORT = sl.email_port
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -82,8 +83,12 @@ WSGI_APPLICATION = 'del_photos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': sl.db_name,
+        'USER': sl.db_username,
+        'PASSWORD': sl.password,
+        'HOST': sl.db_hostname_or_ip,
+        'PORT': sl.db_port,
     }
 }
 
