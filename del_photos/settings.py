@@ -2,16 +2,15 @@ from pathlib import Path
 from datetime import timedelta
 
 import os
-import settings_local as sl
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = sl.secret_key
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -33,11 +32,11 @@ DJOSER = {
     'SERIALIZERS': {},
 }
 
-EMAIL_USE_TLS = sl.email_use_tls
-EMAIL_HOST = sl.email_host
-EMAIL_HOST_USER = sl.email_host_user
-EMAIL_HOST_PASSWORD = sl.email_host_password
-EMAIL_PORT = sl.email_port
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -84,11 +83,11 @@ WSGI_APPLICATION = 'del_photos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': sl.db_name,
-        'USER': sl.db_username,
-        'PASSWORD': sl.password,
-        'HOST': sl.db_hostname_or_ip,
-        'PORT': sl.db_port,
+        'NAME': os.getenv('NAME'),
+        'USER': os.getenv('USER'),
+        'PASSWORD': os.getenv('PASSWORD'),
+        'HOST': os.getenv('HOST'),
+        'PORT': os.getenv('PORT')
     }
 }
 
